@@ -1,3 +1,4 @@
+import 'package:chitchat/screens/homeScreen.dart';
 import 'package:chitchat/screens/signUpScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -129,24 +130,31 @@ class SignInScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 50.0),
-                            Center(
-                              child: Material(
-                                borderRadius: BorderRadius.circular(10),
-                                elevation: 5.0,
-                                child: Container(
-                                  width: 130,
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF6380fb),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "SignIn",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => const HomeScreen(),
+                                  )),
+                              child: Center(
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  elevation: 5.0,
+                                  child: Container(
+                                    width: 130,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF6380fb),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "SignIn",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ),
                                 ),
