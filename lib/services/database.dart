@@ -7,4 +7,11 @@ class DatabaseMethords {
         .doc(id)
         .set(userInfo);
   }
+
+  Future<QuerySnapshot> getUserByEmail(String email) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .where("E-mail", isEqualTo: email)
+        .get();
+  }
 }
