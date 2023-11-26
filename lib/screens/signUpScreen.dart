@@ -16,6 +16,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   var uuid = Uuid();
+  bool isLoading = false;
   String email = "", password = "", name = "", confirmPassword = "";
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -305,15 +306,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: const Color(0xFF6380fb),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Center(
-                          child: Text(
-                            "SignUp",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Center(
+                                child: Text(
+                                  "SignUp",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
                       ),
                     ),
                   ),

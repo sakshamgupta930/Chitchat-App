@@ -1,64 +1,27 @@
-import 'package:chitchat/screens/forgotPassword.dart';
-import 'package:chitchat/screens/homeScreen.dart';
 import 'package:chitchat/screens/signUpScreen.dart';
-import 'package:chitchat/services/database.dart';
-import 'package:chitchat/services/shared_preference.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
-  String email = "", password = "", name = "", pic = "", username = "", id = "";
-  TextEditingController userEmailController = TextEditingController();
-  TextEditingController userPasswordController = TextEditingController();
-
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  String email = "";
   final _formKey = GlobalKey<FormState>();
+  TextEditingController userEmailController = TextEditingController();
 
-  userLogin() async {
+  resetPassword() async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-
-      QuerySnapshot querySnapshot =
-          await DatabaseMethords().getUserByEmail(email);
-      name = "${querySnapshot.docs[0]["Name"]}";
-      username = "${querySnapshot.docs[0]["Username"]}";
-      pic = "${querySnapshot.docs[0]["Photo"]}";
-      id = "${querySnapshot.docs[0]["Id"]}";
-
-      await SharedPreferenceHelper().saveUserDisplayName(name);
-      await SharedPreferenceHelper().saveUserName(username);
-      await SharedPreferenceHelper().saveUserPic(pic);
-      await SharedPreferenceHelper().saveUserId(id);
-
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => HomeScreen(),
-        ),
-      );
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Password Reset Email has been sent")));
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("No User Found for that Email"),
-          ),
-        );
-      } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Please Enter Correct Password"),
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("No User found that email")));
     }
   }
 
@@ -93,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 children: [
                   Center(
                     child: Text(
-                      "SignIn",
+                      "Password Recovery",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 25.0,
@@ -102,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   Center(
                     child: Text(
-                      "Login to your account",
+                      "Enter your email",
                       style: TextStyle(
                           color: Color(0xFFbbb0ff),
                           fontSize: 18.0,
@@ -118,7 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Container(
                         padding:
                             EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                        height: MediaQuery.of(context).size.height / 2,
+                        height: MediaQuery.of(context).size.height / 2.7,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                             color: Colors.white,
@@ -158,68 +121,15 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 15.0),
-                              Text(
-                                "Password",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(height: 10.0),
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 1.0, color: Colors.black38),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: TextFormField(
-                                  controller: userPasswordController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Enter Password';
-                                    }
-                                    return null;
-                                  },
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    prefixIcon: Icon(
-                                      Icons.key,
-                                      color: Color(0xFF7f30fe),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10.0),
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForgotPasswordScreen(),
-                                  ),
-                                ),
-                                child: Container(
-                                  alignment: Alignment.bottomRight,
-                                  child: Text(
-                                    "Forgot Password?",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ),
                               SizedBox(height: 50.0),
                               GestureDetector(
                                 onTap: () {
                                   if (_formKey.currentState!.validate()) {
                                     setState(() {
                                       email = userEmailController.text;
-                                      password = userPasswordController.text;
                                     });
                                   }
-                                  userLogin();
+                                  resetPassword();
                                 },
                                 child: Center(
                                   child: Material(
@@ -234,7 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "SignIn",
+                                          "Send Email",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,
@@ -260,11 +170,12 @@ class _SignInScreenState extends State<SignInScreen> {
                         style: TextStyle(color: Colors.black, fontSize: 15.0),
                       ),
                       GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
-                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpScreen()));
+                        },
                         child: const Text(
                           "Sign Up Now!",
                           style: TextStyle(
